@@ -1,0 +1,224 @@
+<html>
+<head>
+<!--Real Hello World Assignment 1 (jquery)-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+.hide  { visibility: hidden }
+
+input[type=button]{
+
+padding: 10px 25px;
+margin: 10px ;
+text-align: center;
+display: inline-block;
+}
+</style>
+
+<script>
+$(f1);//occurs after DOM is loaded (after all html tags are interpreted)
+
+function f1()
+{
+// on reload as well as after add
+	$("#b1").prop("disabled",true);
+	$("#b2").prop("disabled",true);
+	$("#b3").prop("disabled",true);
+	$("#t2").addClass("hide");
+	//searching for given element using ajax call
+	$("#t1").blur(function()
+	{
+		var dts=$("#t1").val();
+		
+		var x =
+		{
+            type: "post",
+            dataType:"json",
+            url: "/array",
+            data: {xyz: JSON.stringify(dts),def:"1"},  
+			success: function(gvs){
+			 $("#st").html("Status:"+gvs.status);
+			 if(gvs.status==1) {
+				$("#t1").attr('disabled','disabled');
+				$("#b1").prop("disabled",true);
+				$("#b2").prop("disabled",false);
+				$("#b3").prop("disabled",false);			
+			 }
+			 else if(gvs.status==0) {
+			 	$("#b1").prop("disabled",false);
+			 }
+			 
+            },
+            error: function(e){
+                alert("Something went wrong");
+            }
+        };
+	
+	
+		$.ajax(x);
+	
+	});
+	
+	$("#b1").click(function()		//if clicked on add
+	{
+		var dts=$("#t1").val();		// collect textbox value 
+		
+		var x =
+		{
+            type: "post",
+            dataType:"json",
+            url: "/array",
+            data: {xyz: JSON.stringify(dts),def:"2"},  //def=2 for adding
+			success: function(gvs){
+			 $("#st").html("Status:"+gvs.status);
+			 $("#msg").html(""+gvs.num);  // give array
+			 $("#b1").prop("disabled",true); //disable add button
+			 $("#t1").val("");
+			 if(gvs.status==1) {
+				
+				$("#st").html("added");		
+			 }
+			 else {
+			 	$("#st").html("Not added");
+			 }
+			 
+            },
+            error: function(e){
+                alert("Something went wrong");
+            }
+        };
+	
+	
+	    $.ajax(x);
+	});
+	
+	$("#b2").click(function()		//if modify button clicked
+	{
+	
+	  if($("#t2").hasClass("hide")) {	
+		$("#b3").prop("disabled",true);
+		$("#t2").removeClass("hide");
+		$("#b2").prop("disabled",true);
+	}
+	  else {	
+		var data1 = 
+                {
+                    "k1":$("#t1").val(),
+                    "k2":$("#t2").val()
+					
+                };
+				
+		//$("#t1").attr('disabled','disabled');		
+		var x =
+	        {
+            type: "post",//change to post
+            dataType:"json",
+            url: "/array",
+            data: {xyz: JSON.stringify(data1),def:"3"},  // to replace
+			success: function(gvs){
+			 $("#b3").prop("disabled",true);
+			 $("#b2").prop("disabled",true); 		 
+			 $("#t1").removeAttr('disabled');
+			 $("#t2").removeAttr('disabled');
+			 $("#t2").addClass("hide");
+			 $("#st").html("Status:"+gvs.status);
+			 $("#msg").html(""+gvs.num); 	
+			 if(gvs.status==1) {
+			   $("#st").html("Replaced");	
+			 }
+			 else if(gvs.status==0) {
+			 	$("#st").html("didnt replace");	
+			 }
+			 $("#t1").val("");
+			 $("#t2").val("");
+            },
+            error: function(e){
+                alert("Something went wrong");
+            }
+        };
+	
+	
+		$.ajax(x);
+		
+	  }
+	});
+	$("#t2").blur(function() {
+	   var dts=$("#t2").val();
+		
+	   var x =
+	    {
+            type: "post",//change to post
+            dataType:"json",
+            url: "/array",
+            data: {xyz: JSON.stringify(dts),def:"1"},  
+			success: function(gvs){
+			 $("#st").html("Status:"+gvs.status);
+			 if(gvs.status==1) {
+			    $("#st").html("Give unique number"); 
+				$("#t2").val("");
+				
+			 }
+			 else if(gvs.status==0) {
+			 	$("#b3").prop("disabled",true);
+				$("#b2").prop("disabled",false);
+				$("#t2").attr('disabled','disabled');
+			 }
+			 
+            },
+            error: function(e){
+                alert("Something went wrong");
+            }
+        };
+	
+		 $.ajax(x);//whcih actuall does ajax call
+	});
+	
+	$("#b3").click(function()
+	{
+		var dts=$("#t1").val();
+		var x =
+		{
+            type: "post",//change to post
+            dataType:"json",
+            url: "/array",
+            data: {xyz: JSON.stringify(dts),def:"4"},  
+			success: function(gvs){
+			 $("#b1").prop("disabled",true);
+			 $("#b2").prop("disabled",true);
+			 $("#b3").prop("disabled",true);
+			 $("#msg").html(""+gvs.num);
+			 $("#t1").removeAttr('disabled');
+			 $("#t1").val("");
+			 if(gvs.status==1) {
+				$("#st").html("deleted");
+				
+			 }
+			 else if(gvs.status==0) {
+			 	$("#st").html("not deleted");
+			 }
+			 
+            },
+            error: function(e){
+                alert("Something went wrong ");
+            }
+    };
+	
+	
+	    $.ajax(x);
+	});
+	
+}
+</script>
+</head>
+<body>
+<p id="demo"></p>
+
+<input id="t1" type="text" />
+<span id="st">msg</span><br/>
+<br/><input id="t2" type="text" /><br/>
+<input id="b1" type="button" value="Add"/>
+<input id="b2" type="button" value="Modify"/>
+<input id="b3" type="button" value="Remove"/>
+<p id="msg"></p>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.hide  { visibility: hidden }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+
+$(document).ready(function(){
+  $("#a").prop("disabled",true);
+  $("#u").prop("disabled",true);
+  $("#d").prop("disabled",true);
+  $("#mob").addClass("hide");
+  $("#loc").addClass("hide");
+  $("#eno").val(" ");
+ 
+  $("#eno").focus(function(){
+    $("#view").html("");
+  });
+
+  $("#eno").blur(function(){
+	 var data1 = 
+                {
+                    "k1":$("#eno").val(),
+                    "k2":$("#mob").val(),
+					"k3":$("#loc").val(),
+					//"opt":"search"
+                };
+        
+	 var x =
+	 {
+            type: "post",
+            dataType:"json",
+            url: "/emp",
+            data: {xyz: JSON.stringify(data1),def:"2"},  
+			success: function(gvs){
+			//alert(JSON.stringify(gvs));         
+                $("#msg").html(JSON.stringify(gvs));
+				 if(gvs.status==1) {
+					$("#u").prop("disabled",false);
+                    $("#d").prop("disabled",false);
+                    $("#view").html("Employee present");
+				}
+				else if(gvs.status==0) {
+					$("#a").prop("disabled",false);
+					$("#mob").removeClass("hide");
+					$("#loc").removeClass("hide");
+					$("#view").html("Employee  not present");
+				}
+				
+				
+            },
+            error: function(e){
+                alert('we have trouble'+ e.msg);
+            }
+    };
+	 
+	 $.ajax(x);
+  });
+  $("#a").click(function(){
+  //pick up data from the given output
+   var data1 = 
+                {
+                    "k1":$("#eno").val(),
+                    "k2":$("#mob").val(),
+					"k3":$("#loc").val(),
+					//"opt":"add"
+                };
+				
+	 var x =
+	 {
+            type: "post",
+            dataType:"json",
+            url: "/emp",
+            data: {xyz: JSON.stringify(data1),def:"1"}, 
+			success: function(gvs){
+                alert(JSON.stringify(gvs));//
+				$("#a").prop("disabled",true);
+				$("#mob").addClass("hide");
+				$("#loc").addClass("hide");
+				$("#eno").val(" ");
+				$("#mob").val(" ");
+                $("#loc").val(" ");
+                if(gvs.status==1)
+                  $("#view").html("Employee added");
+                else
+                  $("#view").html("Employee not added");
+            },
+            error: function(e){
+                alert('we have trouble'+ e.msg);
+            }
+    };
+	 
+	 $.ajax(x);
+	
+  });
+   $("#u").click(function(){
+    
+   if($("#mob").hasClass("hide")&&$("#loc").hasClass("hide")) {	
+		$("#d").prop("disabled",true);
+		$("#mob").removeClass("hide");
+        $("#loc").removeClass("hide");
+       
+		
+	}
+	  else {	
+  //pick up data from the given output
+		var data1 = 
+                {
+                    "k1":$("#eno").val(),
+                    "k2":$("#mob").val(),
+					"k3":$("#loc").val(),
+					//"opt":"update" //3
+                };			
+				
+				
+	 var x =
+	 {
+            type: "post",
+            dataType:"json",
+            url: "/emp",
+            data: {xyz: JSON.stringify(data1),def:"3"}, 
+			success: function(gvs){
+                //alert(JSON.stringify(gvs));
+				$("#u").prop("disabled",true);
+				$("#mob").addClass("hide");
+				$("#loc").addClass("hide");
+				$("#eno").val(" ");
+				$("#mob").val(" ");
+                $("#loc").val(" ");
+                if(gvs.status==1)
+                  $("#view").html("Employee updated");
+                else
+                  $("#view").html("Employee not updated");
+            },
+            error: function(e){
+                alert('we have trouble'+ e.msg);
+            }
+    };
+	 
+	 $.ajax(x);
+	}
+  });
+  
+   $("#d").click(function(){
+  //pick up data from the given output
+   var data1 = 
+                {
+                    "k1":$("#eno").val(),
+                    "k2":$("#mob").val(),
+					"k3":$("#loc").val(),
+					//"opt":"delete"
+                };
+				
+		
+	 var x =
+	 {
+            type: "post",
+            dataType:"json",
+            url: "/emp",
+            data: {xyz: JSON.stringify(data1),def:"4"}, 
+			success: function(gvs){
+               // alert(JSON.stringify(gvs));
+				$("#u").prop("disabled",true);
+				$("#d").prop("disabled",true);
+                $("#eno").val(" ");
+                if(gvs.status==1)
+                  $("#view").html("Employee deleted");
+                else
+                  $("#view").html("Employee not deleted");
+            },
+            error: function(e){
+                alert('we have trouble'+ e.msg);
+            }
+    };
+	 
+	 $.ajax(x);
+	
+  });
+  
+  
+ 
+});
+</script>
+</head>
+<body>
+
+<h2>EMPLOYEE </h2>
+<Br/>Emp Number   :<input type="text" placeholder="Employee Number" id="eno" /><span id="view"></span><br/>
+<Br/>Mobile Number: <input type="text" placeholder="Mobile Number" id="mob"/><br/>
+<Br/>Location     : <input type="text" placeholder="Location" id="loc"/>
+
+
+
+<p id="msg"></p>
+
+
+<button id ="a">Add</button>
+<button id ="u">Update</button>
+<button id ="d">Delete</button>
+
+</body>
+</html>
